@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { getSignedURL } from "./actions"
+import { computeSHA256 } from "@/lib/utils"
 
 export default function Uploader() {
     const [file, setFile] = useState<File | undefined>()
@@ -9,13 +10,7 @@ export default function Uploader() {
     const [statusMessage, setStatusMessage] = useState<string | undefined>()
     const [loading, setLoading] = useState<boolean>(false)
 
-    const computeSHA256 = async (file: File) => {
-        const buffer = await file.arrayBuffer()
-        const hashBuffer = await crypto.subtle.digest("SHA-256", buffer)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("")
-        return hashHex
-    }
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]

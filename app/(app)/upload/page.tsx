@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Uploader from "./Uploader";
+import FileUploader from "./file-uploader";
+import PageTitle from "@/components/shared/page-title";
 
 export const metadata: Metadata = {
     title: "Upload Files | Speedy Uploads",
@@ -8,7 +10,8 @@ export const metadata: Metadata = {
 export default function UploadPage() {
     return (
         <div>
-            <Uploader />
+            <PageTitle>Upload Files</PageTitle>
+            <FileUploader />
         </div>
     )
 }
