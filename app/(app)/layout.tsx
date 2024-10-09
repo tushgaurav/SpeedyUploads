@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
-    IconArrowLeft,
-    IconBrandTabler,
-    IconSettings,
-    IconUserBolt,
+    IconFiles,
+    IconCloudUpload,
+    IconShare,
+    IconHome
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -17,31 +17,31 @@ import { ModeToggle } from "./ContextMenu";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const links = [
         {
-            label: "Dashboard",
-            href: "#",
+            label: "Home",
+            href: "/home",
             icon: (
-                <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                <IconHome className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
             ),
         },
         {
             label: "Upload",
             href: "/upload",
             icon: (
-                <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                <IconCloudUpload className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
             ),
         },
         {
-            label: "Settings",
-            href: "#",
+            label: "Files",
+            href: "/files",
             icon: (
-                <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                <IconFiles className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
             ),
         },
         {
-            label: "Logout",
-            href: "#",
+            label: "Sharing",
+            href: "/share",
             icon: (
-                <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+                <IconShare className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
             ),
         },
     ];
