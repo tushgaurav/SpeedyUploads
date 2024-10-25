@@ -2,6 +2,7 @@ import { HeroText } from "./_components/hero";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { VelocityScroll } from "@/components/ui/velocity-scroll";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "SpeedyUploads.com - Fast Uploads & File Sharing",
@@ -27,7 +28,7 @@ function Button({ type = "gradient", children }: { type?: "gradient" | "litup", 
 
 export default function Home() {
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       {/* Gradients */}
       <div
         aria-hidden="true"
@@ -38,7 +39,6 @@ export default function Home() {
       </div>
       {/* End Gradients */}
       <div className='py-10 relative z-10'>
-
         <VelocityScroll
           text="Speed   ."
           default_velocity={5}
@@ -46,23 +46,25 @@ export default function Home() {
         />
 
         <h1 className="pt-10 text-4xl md:text-6xl text-center text-black dark:text-gray-300">
-          <span className='text-primaryblue font-bold z-50'>Fast Uploads,</span> Effortless Shares.
+          <span className='text-primaryblue font-bold z-50'>Fast Uploads, </span> Effortless Shares.
         </h1>
-        <p className='pt-10 text-xl text-center text-black dark:text-gray-300'>
+        <p className='pt-10 text-xl text-center text-gray-800 dark:text-gray-300'>
           The fastest way to share files.
         </p>
         <div className='flex justify-center pt-4'>
-          <Button>Get Started</Button>
+          <Link href="/home">
+            <Button>Get Started</Button>
+          </Link>
         </div>
-        <div className="pt-20 relative">
-          <Image src="/hero.png" alt="Hero" className="mx-auto" width={400} height={400} />
-          {/* circular glow */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-gradient-to-br from-white to-primaryblue dark:from-gray-900 dark:to-gray-600 opacity-50 blur-2xl" />
+        <div className="pt-20">
+          <Image src="/hero.png" alt="Hero" className="mx-auto z-10" width={400} height={400} />
         </div>
       </div>
 
 
-      {/* <HeroText /> */}
-    </div >
+      <div>
+        hi
+      </div>
+    </div>
   );
 }

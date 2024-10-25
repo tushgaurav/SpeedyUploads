@@ -2,6 +2,7 @@
 
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+import db from "@/lib/db"
 
 const generateFileName = (bytes = 16) => {
     const random = new Uint8Array(bytes)
@@ -17,11 +18,11 @@ const s3 = new S3Client({
     },
 })
 
-const exceptedFileTypes = ["image/jpeg", "image/png", "image/gif"]
+const exceptedFileTypes = ["image/jpeg", "image/png", "image/gif", "*"]
 
 const maxFileSize = 1024 * 1024 * 10 // 10MB
 
-export async function getSignedURL(type = "*", size: number, checksum: string) {
+export async function getSignedURL(name: string | null, type = "*", size: number, checksum: string) {
     const session = "hi"
     if (!session) {
         return { failure: { message: "Not authenticated" } }
@@ -31,13 +32,14 @@ export async function getSignedURL(type = "*", size: number, checksum: string) {
         return { failure: { message: "File too large" } }
     }
 
-    if (!exceptedFileTypes.includes(type)) {
+    if (!exceptedFileTypes.includes(type) && !exceptedFileTypes.includes("*")) {
         return { failure: { message: "Invalid file type" } }
     }
 
+    const key = name ? `uploads/${name}` : `uploads/${generateFileName()}`
     const putObjectCommand = new PutObjectCommand({
         Bucket: process.env.AWS_BUCKET_NAME!,
-        Key: `uploads/${generateFileName()}`,
+        Key: key,
         ContentType: type,
         ContentLength: size,
         ChecksumSHA256: checksum,
@@ -46,6 +48,19 @@ export async function getSignedURL(type = "*", size: number, checksum: string) {
         },
     })
 
+    const publicUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`
     const signedUrl = await getSignedUrl(s3, putObjectCommand, { expiresIn: 90 })
-    return { success: { url: signedUrl } }
+
+    // Save the file to the database
+    await db.file.create({
+        data: {
+            name: name ?? key,
+            url: publicUrl,
+            size,
+            type
+        }
+    })
+
+
+    return { success: { url: signedUrl, publicUrl } }
 }

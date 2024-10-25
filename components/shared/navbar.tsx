@@ -5,7 +5,7 @@ import Image from "next/image"
 
 export default function Navbar() {
     return (
-        <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6 bg-primaryblue text-white relative z-20">
+        <header className="flex h-16 w-full shrink-0 items-center px-4 md:px-6 bg-primaryblue text-white relative z-20">
             <Sheet>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon" className="lg:hidden">
@@ -36,30 +36,34 @@ export default function Navbar() {
             </Sheet>
             <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                 <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
-                    <Image src="/logo_bg.svg" alt="Logo" width={120} height={50} />
+                    <Image src="/images/logo/logo_bg.svg" alt="Logo" width={120} height={50} />
                 </Link>
                 <nav className="ml-auto hidden lg:flex gap-6">
                     <Link
                         href="/"
                         prefetch={false}
+                        className="font-semibold text-sm text-blue-100 hover:text-gray-100"
                     >
                         Home
                     </Link>
                     <Link
                         href="/home"
                         prefetch={false}
+                        className="font-semibold text-sm text-blue-100 hover:text-gray-100"
                     >
                         App
                     </Link>
                     <Link
                         href="#"
                         prefetch={false}
+                        className="font-semibold text-sm text-blue-100 hover:text-gray-100"
                     >
                         Services
                     </Link>
                     <Link
                         href="#"
                         prefetch={false}
+                        className="font-semibold text-sm text-blue-100 hover:text-gray-100"
                     >
                         Contact
                     </Link>

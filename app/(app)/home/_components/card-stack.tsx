@@ -4,17 +4,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 
-function SpotLightItem({ className, children }: { className?: string, children: React.ReactNode }) {
+export function SpotLightItem({ className, children }: { className?: string, children: React.ReactNode }) {
     const mousePosition = useMousePosition();
     const [isHovered, setIsHovered] = useState(false);
     return (
-        <div
+        <Card
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={
                 cn(
-                    "relative overflow-hidden border-zinc-800 border-2 rounded-lg backdrop-blur",
+                    "relative overflow-hidden rounded-lg backdrop-blur",
                     className
                 )
             }
@@ -28,25 +29,18 @@ function SpotLightItem({ className, children }: { className?: string, children: 
                         layoutId="spotlight"
                         className="absolute opacity-0 group-hover:opacity-100 z-10 inset-0 bg-fixed rounded-lg"
                         style={{
-                            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, #ffffff76 0%,transparent 20%,transparent) fixed `,
+                            background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, #ffffff76 0%,transparent 10%,transparent) fixed `,
                         }}
                     ></motion.div>
                 )}
             </AnimatePresence>
-            {/* <motion.div
-                className="absolute inset-0 z-0 overflow-hidden bg-fixed"
-                style={{
-                    clipPath: `polygon(0% 0%, 0% 100%, calc(0% + 3px) 100%, calc(0% + 3px) calc(0% + 3px), calc(100% - 3px) calc(0% + 3px), calc(100% - 3px) calc(100% - 3px), calc(0% + 3px) calc(100% - 3px), calc(0% + 3px) 100%, 100% 100%, 100% 0%)`,
-                    background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, hsla(${(mousePosition.x! + mousePosition.y!) / 5},90%,70%,0.35) 0%,transparent 10%,transparent) fixed`
-                }}
-            ></motion.div> */}
             <motion.div
                 className="absolute inset-0 z-0  bg-fixed rounded-lg"
                 style={{
-                    background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, #ffffff6e 0%,transparent 10%,transparent) fixed`,
+                    background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255, 0.1) 0%,transparent 10%,transparent) fixed`,
                 }}></motion.div>
             <div className="relative z-10">{children}</div>
-        </div>
+        </Card>
     );
 }
 
@@ -54,9 +48,9 @@ function SpotLightItem({ className, children }: { className?: string, children: 
 function CardContent({ icon, title, link }: { icon: React.ReactNode, title: string, link: string }) {
     return (
         <Link href={link}>
-            <div className='p-6'>
+            <div className='p-2'>
                 {icon}
-                <h2 className="font-semibold text-zinc-100 pt-4">{title}</h2>
+                <h2 className="text-gray-900 dark:text-zinc-100 pt-1">{title}</h2>
             </div>
         </Link>
     )
@@ -83,7 +77,7 @@ export default function CardStack() {
     const boxes = [
         {
             id: "12",
-            child: <CardContent icon={<IconFolderPlus size={24} />} title="Create folder" link="hi" />
+            child: <CardContent icon={<IconFolderPlus size={24} />} title="Upload" link="/upload" />
         },
         {
             id: "22",
@@ -97,7 +91,7 @@ export default function CardStack() {
     return (
         <div className="flex flex-wrap gap-4 text-base">
             {boxes.map((box) => (
-                <SpotLightItem key={box.id} className="w-44 md:w-52">{box.child}</SpotLightItem>
+                <SpotLightItem key={box.id} className="w-40">{box.child}</SpotLightItem>
             ))}
         </div>
     );

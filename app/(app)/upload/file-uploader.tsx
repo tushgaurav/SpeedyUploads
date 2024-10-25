@@ -1,119 +1,117 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Upload, Check, X, FileIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { getSignedURL } from "./actions"
-import { computeSHA256 } from "@/lib/utils"
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, Check, X, FileIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getSignedURL } from "./actions";
+import { computeSHA256 } from "@/lib/utils";
 
 export default function FileUploader() {
-    const [isDragActive, setIsDragActive] = useState(false)
-    const [file, setFile] = useState<File | null>(null)
-    const [fileUrl, setFileUrl] = useState<string | undefined>()
-    const [statusMessage, setStatusMessage] = useState<string | undefined>()
-    const [loading, setLoading] = useState<boolean>(false)
-    const [uploadProgress, setUploadProgress] = useState(0)
-    const fileInputRef = useRef<HTMLInputElement>(null)
+    const [isDragActive, setIsDragActive] = useState(false);
+    const [file, setFile] = useState<File | null>(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [statusMessage, setStatusMessage] = useState<string>("");
+    const [isUploading, setIsUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleDragEnter = (e: React.DragEvent) => {
-        e.preventDefault()
-        setIsDragActive(true)
-    }
+        e.preventDefault();
+        setIsDragActive(true);
+    };
 
     const handleDragLeave = (e: React.DragEvent) => {
-        e.preventDefault()
-        setIsDragActive(false)
-    }
+        e.preventDefault();
+        setIsDragActive(false);
+    };
 
-    const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault()
-        setIsDragActive(false)
+    const handleDrop = async (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragActive(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            setFile(e.dataTransfer.files[0])
-            simulateUpload()
+            setFile(e.dataTransfer.files[0]);
+            await handleUpload(e.dataTransfer.files[0]);
         }
-    }
+    };
 
-    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files && e.target.files[0]) {
-    //         setFile(e.target.files[0])
-    //         simulateUpload()
-    //     }
-    // }
-
-    const simulateUpload = () => {
-        setUploadProgress(0)
-        const interval = setInterval(() => {
-            setUploadProgress((prevProgress) => {
-                if (prevProgress >= 100) {
-                    clearInterval(interval)
-                    return 100
-                }
-                return prevProgress + 10
-            })
-        }, 500)
-    }
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        setFile(file)
-
-        if (fileUrl) {
-            URL.revokeObjectURL(fileUrl)
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            await handleUpload(selectedFile);
         }
+    };
 
-        if (file) {
-            const url = URL.createObjectURL(file)
-            setFileUrl(url)
-        } else {
-            setFileUrl(undefined)
-        }
-    }
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-
-        setLoading(true)
+    const handleUpload = async (fileToUpload: File) => {
+        setIsUploading(true);
+        setUploadProgress(0);
+        setStatusMessage("Preparing upload...");
 
         try {
-            if (file) {
-                setStatusMessage("Uploading...")
-                const checksum = await computeSHA256(file)
-                const signedUrl = await getSignedURL(file.type, file.size, checksum)
-                if (signedUrl.failure !== undefined) {
-                    setStatusMessage("Failed to get signed URL")
-                    console.error("error")
-                    setStatusMessage(signedUrl.failure.message)
-                    return
-                }
-                const url = signedUrl.success!.url;
+            // Calculate checksum
+            const checksum = await computeSHA256(fileToUpload);
+            setStatusMessage("Getting upload URL...");
 
-                await fetch(url, {
-                    method: "PUT",
-                    body: file,
-                    headers: {
-                        "Content-Type": file.type,
-                    },
-                })
+            // Get signed URL
+            const signedUrlResponse = await getSignedURL(
+                fileToUpload.name,
+                fileToUpload.type,
+                fileToUpload.size,
+                checksum
+            );
+
+            if (signedUrlResponse.failure) {
+                throw new Error(signedUrlResponse.failure.message);
             }
-        } catch (e) {
-            setStatusMessage("Failed to upload")
-            console.error(e)
-        } finally {
-            setLoading(false)
-        }
 
-        setStatusMessage("Uploaded!")
-    }
+            const url = signedUrlResponse.success!.url;
+            console.log("PUBLIC URL : ", signedUrlResponse.success!.publicUrl);
+            setStatusMessage("Uploading file...");
+
+            // Upload file with progress tracking
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener("progress", (event) => {
+                if (event.lengthComputable) {
+                    const progress = Math.round((event.loaded / event.total) * 100);
+                    setUploadProgress(progress);
+                }
+            });
+
+            await new Promise((resolve, reject) => {
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(xhr.response);
+                    } else {
+                        reject(new Error(`HTTP Error: ${xhr.status}`));
+                    }
+                };
+                xhr.onerror = () => reject(new Error("Network Error"));
+
+                xhr.open("PUT", url);
+                xhr.setRequestHeader("Content-Type", fileToUpload.type);
+                xhr.send(fileToUpload);
+            });
+
+            setStatusMessage("Upload complete!");
+            setUploadProgress(100);
+        } catch (error) {
+            setStatusMessage(`Upload failed: ${error instanceof Error ? error.message : "Unknown error"}`);
+            console.error("Upload error:", error);
+        } finally {
+            setIsUploading(false);
+        }
+    };
 
     const resetUpload = () => {
-        setFile(null)
-        setUploadProgress(0)
+        setFile(null);
+        setUploadProgress(0);
+        setStatusMessage("");
+        setIsUploading(false);
         if (fileInputRef.current) {
-            fileInputRef.current.value = ""
+            fileInputRef.current.value = "";
         }
-    }
+    };
 
     return (
         <motion.div
@@ -124,7 +122,7 @@ export default function FileUploader() {
         >
             <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center ${isDragActive
-                    ? "border-primaryblue bg-blue-50 dark:bg-blue-900"
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
                     : "border-gray-300 dark:border-gray-600"
                     }`}
                 onDragEnter={handleDragEnter}
@@ -138,71 +136,78 @@ export default function FileUploader() {
                     onChange={handleFileChange}
                     ref={fileInputRef}
                 />
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                     {!file && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
+                            className="space-y-4"
                         >
-                            <Upload className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
-                            <p className="text-gray-600 dark:text-gray-400 mb-2">
+                            <Upload className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
+                            <p className="text-gray-600 dark:text-gray-400">
                                 Drag and drop your file here, or
                             </p>
                             <Button
                                 onClick={() => fileInputRef.current?.click()}
                                 variant="outline"
-                                className="mt-2"
+                                disabled={isUploading}
                             >
                                 Select File
                             </Button>
                         </motion.div>
                     )}
-                </AnimatePresence>
-                <AnimatePresence>
+
                     {file && (
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="mt-4"
+                            className="space-y-4"
                         >
-                            <div className="flex items-center justify-center mb-4">
-                                <FileIcon className="h-8 w-8 text-blue-500 mr-2" />
+                            <div className="flex items-center justify-center space-x-2">
+                                <FileIcon className="h-8 w-8 text-blue-500" />
                                 <span className="text-gray-700 dark:text-gray-300">
                                     {file.name}
                                 </span>
                             </div>
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 mb-4">
+
+                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                                 <motion.div
                                     className="bg-blue-500 h-2.5 rounded-full"
-                                    initial={{ width: 0 }}
+                                    initial={{ width: "0%" }}
                                     animate={{ width: `${uploadProgress}%` }}
-                                    transition={{ duration: 0.5 }}
+                                    transition={{ duration: 0.3 }}
                                 />
                             </div>
-                            {uploadProgress === 100 ? (
-                                <div className="flex items-center justify-center text-green-500">
-                                    <Check className="mr-2" />
-                                    <span>Upload Complete</span>
-                                </div>
-                            ) : (
-                                <p className="text-gray-600 dark:text-gray-400">
-                                    Uploading... {uploadProgress}%
-                                </p>
-                            )}
-                            <Button
-                                onClick={resetUpload}
-                                variant="outline"
-                                className="mt-4"
-                            >
-                                <X className="mr-2 h-4 w-4" />
-                                Cancel
-                            </Button>
+
+                            <div className="flex flex-col items-center space-y-2">
+                                {uploadProgress === 100 ? (
+                                    <div className="flex items-center text-green-500">
+                                        <Check className="mr-2" />
+                                        <span>Upload Complete</span>
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-600 dark:text-gray-400">
+                                        {statusMessage} {uploadProgress > 0 && `(${uploadProgress}%)`}
+                                    </p>
+                                )}
+
+                                <Button
+                                    onClick={resetUpload}
+                                    variant="outline"
+                                    disabled={isUploading}
+                                    className="mt-2"
+                                >
+                                    <X className="mr-2 h-4 w-4" />
+                                    {isUploading ? "Uploading..." : "Cancel"}
+                                </Button>
+                            </div>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
         </motion.div>
-    )
+    );
 }
+

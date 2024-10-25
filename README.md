@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<img src="https://speedyuploads.com/logo_small.svg" alt="drawing" width="100"/>
 
-## Getting Started
+# SpeedyUploads
+<table>
+<tr>
+<td>
+  Instantly upload and share files with ease on SpeedyUploads.com’s user-friendly platform.
+</td>
+</tr>
+</table>
 
-First, run the development server:
+## Live WebApp
+![Homepage](/images/homepage.png)
+Here is a main webapp:  https://speedyuploads.com/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![Dashboard](/images/dashboard.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Development
+Want to contribute? Great!
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To fix a bug or enhance an existing module, follow these steps:
 
-## Learn More
+- Fork the repo
+- Create a new branch (`git checkout -b improve-feature`)
+- Make the appropriate changes in the files
+- Add changes to reflect the changes made
+- Commit your changes (`git commit -am 'Improve feature'`)
+- Push to the branch (`git push origin improve-feature`)
+- Create a Pull Request 
 
-To learn more about Next.js, take a look at the following resources:
+### Bug / Feature Request
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+If you find a bug (the website couldn't handle the query and / or gave undesired results), kindly open an issue [here](https://github.com/tushgaurav/SpeedyUploads/issues/new) by including your search query and the expected result.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If you'd like to request a new function, feel free to do so by opening an issue [here](https://github.com/tushgaurav/SpeedyUploads/issues/new). Please include sample queries and their corresponding results.
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js](https://nextjs.org/) - Frontend in React.js and serverless backend.
+- [shadcn/ui](https://ui.shadcn.com/) - For styling.
+- [Azure Blob Storage](https://azure.microsoft.com/en-in/products/storage/blobs) - Main object storage.
+- [Amazon S3](https://aws.amazon.com/s3/) - Backup object storage.
+- [PostgreSQL Database](https://aws.amazon.com/rds/) - Main production database hosted on AWS RDS.
+- [Auth.js](https://authjs.dev/) - For authentication.
+
+
+## To-do
+- Homepage Redesign.
+- Layout Redesign.
+- SpeedyUploads Bug Bounty Page (/whitehat).
+- Custom share pages for each uploads.
+- Multiple file uploads.
+
+
+### [License](https://github.com/tushgaurav/SpeedyUploads/blob/main/LICENSE)
+
+GPLv2
+

@@ -1,11 +1,17 @@
+import type { Metadata } from "next";
 import CardStack from "./_components/card-stack";
-import RecentFilesTable from "./_components/recent-files";
+import { RecentFilesCards } from "./_components/recent-uploads";
+
+export const metadata: Metadata = {
+    title: "Home",
+};
 
 export default function Home() {
     return (
         <div>
             <CardStack />
-            <RecentFilesTable />
+            <RecentFilesCards />
+            {/* <RecentFilesTable /> */}
         </div>
     )
 }
