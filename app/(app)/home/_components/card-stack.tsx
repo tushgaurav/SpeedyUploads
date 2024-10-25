@@ -57,12 +57,13 @@ function CardContent({ icon, title, link }: { icon: React.ReactNode, title: stri
 }
 
 const useMousePosition = () => {
-    const [mousePosition, setMousePosition] = React.useState({
+    const [mousePosition, setMousePosition] = React.useState<{ x: number | null, y: number | null }>({
         x: null,
         y: null,
     });
+
     React.useEffect(() => {
-        const updateMousePosition = (ev) => {
+        const updateMousePosition = (ev: MouseEvent) => {
             setMousePosition({ x: ev.clientX, y: ev.clientY });
         };
         window.addEventListener("mousemove", updateMousePosition);
@@ -70,6 +71,7 @@ const useMousePosition = () => {
             window.removeEventListener("mousemove", updateMousePosition);
         };
     }, []);
+
     return mousePosition;
 };
 

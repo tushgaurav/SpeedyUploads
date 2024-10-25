@@ -31,7 +31,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-import { signOut } from "next-auth/react"
 import { SignOut } from "./signout"
 import Link from "next/link"
 

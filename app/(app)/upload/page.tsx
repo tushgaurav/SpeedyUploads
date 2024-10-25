@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Uploader from "./Uploader";
 import FileUploader from "./file-uploader";
 import PageTitle from "@/components/shared/page-title";
 

@@ -1,4 +1,3 @@
-import { HeroText } from "./_components/hero";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { VelocityScroll } from "@/components/ui/velocity-scroll";

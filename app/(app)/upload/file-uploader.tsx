@@ -54,10 +54,10 @@ export default function FileUploader() {
 
             // Get signed URL
             const signedUrlResponse = await getSignedURL(
-                fileToUpload.name,
-                fileToUpload.type,
                 fileToUpload.size,
-                checksum
+                fileToUpload.type,
+                checksum,
+                fileToUpload.name,
             );
 
             if (signedUrlResponse.failure) {

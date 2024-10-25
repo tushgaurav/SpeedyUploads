@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { UserAuthForm } from "@/components/user-auth-form"
 import { ChevronLeft } from "lucide-react"
 import Image from "next/image"
+import { Suspense } from "react"
 
 export const metadata: Metadata = {
     title: "Login",
@@ -37,7 +38,9 @@ export default function LoginPage() {
                         Enter your email to sign in to your account
                     </p>
                 </div>
-                <UserAuthForm />
+                <Suspense fallback={null}>
+                    <UserAuthForm />
+                </Suspense>
                 <p className="px-8 text-center text-sm text-muted-foreground">
                     <Link
                         href="/register"

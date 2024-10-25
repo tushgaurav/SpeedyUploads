@@ -37,7 +37,7 @@ export default function Uploader() {
             if (file) {
                 setStatusMessage("Uploading...")
                 const checksum = await computeSHA256(file)
-                const signedUrl = await getSignedURL(file.type, file.size, checksum)
+                const signedUrl = await getSignedURL(file.size, checksum, file.name, file.type)
                 if (signedUrl.failure !== undefined) {
                     setStatusMessage("Failed to get signed URL")
                     console.error("error")
@@ -63,6 +63,7 @@ export default function Uploader() {
 
         setStatusMessage("Uploaded!")
     }
+    console.log(loading)
 
     return (
         <div className="flex flex-col w-full h-full">

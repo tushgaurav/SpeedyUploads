@@ -20,10 +20,6 @@ export default function FileQuickAction({ file, className }: { file: File, class
 
     }
 
-    const viewFile = () => {
-        // open file in new tab
-    }
-
     return (
         <div className={cn("flex", "items-center", "justify-end gap-2", className)}>
             <ActionButton onClick={copyLink}>

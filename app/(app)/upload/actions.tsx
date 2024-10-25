@@ -22,7 +22,7 @@ const exceptedFileTypes = ["image/jpeg", "image/png", "image/gif", "*"]
 
 const maxFileSize = 1024 * 1024 * 10 // 10MB
 
-export async function getSignedURL(name: string | null, type = "*", size: number, checksum: string) {
+export async function getSignedURL(size: number, checksum: string, name?: string | null, type = "*") {
     const session = "hi"
     if (!session) {
         return { failure: { message: "Not authenticated" } }

@@ -40,7 +40,7 @@ const GitHub = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
+type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>
 
 type FormData = z.infer<typeof userAuthSchema>
 
