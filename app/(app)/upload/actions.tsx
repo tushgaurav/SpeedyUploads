@@ -11,10 +11,10 @@ const generateFileName = (bytes = 16) => {
 }
 
 const s3 = new S3Client({
-    region: process.env.AWS_BUCKET_REGION!,
+    region: process.env.SP_AWS_BUCKET_REGION!,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        accessKeyId: process.env.SP_AWS_ACCESS_KEY!,
+        secretAccessKey: process.env.SP_AWS_SECRET_ACCESS_KEY!,
     },
 })
 
@@ -38,7 +38,7 @@ export async function getSignedURL(size: number, checksum: string, name?: string
 
     const key = name ? `uploads/${name}` : `uploads/${generateFileName()}`
     const putObjectCommand = new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME!,
+        Bucket: process.env.SP_AWS_BUCKET_NAME!,
         Key: key,
         ContentType: type,
         ContentLength: size,
@@ -48,7 +48,7 @@ export async function getSignedURL(size: number, checksum: string, name?: string
         },
     })
 
-    const publicUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`
+    const publicUrl = `https://${process.env.SP_AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`
     const signedUrl = await getSignedUrl(s3, putObjectCommand, { expiresIn: 90 })
 
     // Save the file to the database
