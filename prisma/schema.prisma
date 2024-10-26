@@ -77,6 +77,11 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+enum Permission {
+  PUBLIC
+  PRIVATE
+}
+
 model File {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -85,4 +90,16 @@ model File {
   url       String
   size      Int
   type      String
+}
+
+model ShortLink {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  backhalf    String     @unique
+  fullUrl     String
+  views       Int        @default(0)
+  permission  Permission @default(PUBLIC)
 }
